@@ -118,3 +118,11 @@ string: 변환할 IP주소 정보를 담고 있는 문자열의 주소 값 전�
 addr: 변환된 정보를 저장할 in_addr 구조체 변수의 주소 값 전달 <br>
 - Return <br>
 1: Success / 0: Fail
+
+```
+char* inet_ntoa(struct in_addr adr);
+```
+inet_aton과 반대로 작동하는 함수로써  인자로 전달된 정수형태의 IP정보를 참조하여 문자열 형태의 IP정보로 변환함. 변환된 문자열의 주소 값을 반환
+- Return <br>
+성공 시 변환된 문자열의 주소 값, 실패 시 -1 반환
+
