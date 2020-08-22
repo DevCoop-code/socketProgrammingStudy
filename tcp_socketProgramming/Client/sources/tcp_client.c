@@ -26,7 +26,14 @@ int main(int argc, char* argv[]) {
 
     memset(&serv_addr, 0, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = inet_addr(argv[1]);
+    // 1. Use inet_addr Function
+    // serv_addr.sin_addr.s_addr = inet_addr(argv[1]);
+    // 2. Use inet_aton
+    int result = inet_aton(argv[1], &serv_addr.sin_addr.s_addr);
+    if (result == 0) {
+        // Fail
+        error_handling("inet_aton()");
+    }
     serv_addr.sin_port = htons(atoi(argv[2]));
 
     if (connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) == -1) {

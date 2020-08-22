@@ -2,32 +2,32 @@
 Study about Socket Programming
 
 ## Work Flow about Socket Programming
-#### Server Socket
+### Server Socket
 - Socket 생성
 - bind(IP, Port등을 설정)
 - listen
 - accept
 
-#### Client Socket
+### Client Socket
 - Socket 생성
 - connect
 
 ## Socket Protocol
-#### Socket 생성
+### Socket 생성
 **int socket(int domain, int type, int protocol);**<br>
 socket Parameters
 - domain: 소켓이 사용할 프로토콜 체계(Protcol Family)정보 전달
 - type: 소켓의 데이터 전송방식에 대한 정보 전달
 - protocol: 두 컴퓨터간 통신에 사용되는 프로토콜 정보 전달
 
-#### 프로토콜 체계(Protocol Family)
+### 프로토콜 체계(Protocol Family)
 - PF_INET: IPv4 인터넷 프로토콜 체계
 - PF_INET6: IPv6 인터넷 프로토콜 체계
 - PF_LOCAL: 로컬 통신을 위한 UNIX 프로토콜 체계
 - PF_PACKET: Low Level 소켓을 위한 프로토콜 체계
 - PF_IPX: IPX노벨 프로토콜 체계
 
-#### 소켓의 타입(Type)
+### 소켓의 타입(Type)
 소켓의 데이터 전송방식 
 1. 연결지향형 소켓(SOCK_STREAM)
 Socket 함수의 두번째 인자로 SOCK_STREAM을 전달하면 연결지향형 소켓이 생성
@@ -43,7 +43,7 @@ Socket 함수의 두번째 인자로 SOCK_DGRAM을 전달하면 비 연결지향
    - 전송되는 데이터의 경계가 존재
    - 한번에 전송할 수 있는 데이터의 크기가 제한
 
-#### 프로토콜의 최종선택
+### 프로토콜의 최종선택
 최종적으로 소켓이 사용하게 될 프로토콜 정보를 전달하는 목적으로 존재, 즉, 소켓의 데이터 전송방식은 같지만 그 안에서도 프로토콜이 나뉘는 상황이 존재할 수 있어 프로토콜 정보를 조금 더 구체화함 <br>
 Ex]<br> 
 TCP 소켓: socket(PF_INET, SOCK_STREAM, IPPROTO_TCP); <br>
@@ -66,7 +66,7 @@ struct in_addr
 }
 ```
 
-#### 구조체 sockaddr_in의 멤버에 대한 분석
+### 구조체 sockaddr_in의 멤버에 대한 분석
 - 멤버 sin_family
   - AF_INET: IPv4 인터넷 프로토콜에 적용하는 주소체계
   - AF_INET6: IPv6 인터넷 프로토콜에 적용하는 주소 체계
@@ -81,7 +81,7 @@ struct in_addr
 ## 네트워크 바이트 순서와 인터넷 주소 변환
 CPU에 따라 4바이트 정수 1을 메모리 공간에 저장하는 방식이 달라질 수 있음. 이러한 부분을 고려하지 않고서 데이터를 송수신하면 문제가 발생할 수 있음
 
-#### 바이트 순서(Order)와 네트워크 바이트 순서
+### 바이트 순서(Order)와 네트워크 바이트 순서
 CPU가 데이터를 메모리에 저장하는 방식은 다음과 같이 2가지로 나뉨
 - 빅 엔디안(Big Endian): 상위 바이트의 값을 작은 번지수에 저장
 - 리틀 엔디안(Little Endian): 상위 바이트의 값을 큰 번지수에 저장
@@ -92,7 +92,7 @@ CPU가 데이터를 메모리에 저장하는 방식은 다음과 같이 2가지
 
 데이터를 저장하는 방식의 문제점 때문에 네트워크를 통해 데이터를 전송할 때는 통일된 기준으로 데이터를 전송하기로 약속했으면 이 약속을 가리켜 네트워크 바이트 순서(Network Byte Order)라 함. 네트워크 바이트 순서의 약속은 **빅 엔디안 방식으로의 통일**, 즉 네트워크 상으로 데이터를 전송할 때는 데이터의 배열을 빅 엔디안 기준으로 변경해서 송수신 해야함
 
-#### 바이트 순서의 변환(Endian Conversions)
+### 바이트 순서의 변환(Endian Conversions)
 sockaddr_in 구조체 변수에 값을 채우기 앞서 네트워크 바이트 순서로 변환해서 저장해야 함
 ```
 unsigned short htons(unsigned short);
@@ -100,10 +100,21 @@ unsigned short ntohs(unsigned short);
 unsigned long htonl(unsigned long);
 unsigned long ntohl(unsigned long);
 ```
-h: h는 호스트(host) 바이트 순서를 의미
-n: n은 네트워크(network) 바이트 순서를 의미
-s: short, l: long 을 의미
+h: h는 호스트(host) 바이트 순서를 의미 <br>
+n: n은 네트워크(network) 바이트 순서를 의미 <br>
+s: short, l: long 을 의미 <br>
 
 ex] <br>
 htons: short형 데이터를 호스트 바이트 순서에서 네트워크 바이트 순서로 변환<br>
 ntohs: short형 데이터를 네트워크 바이트 순서에서 호스트 바이트 순서로 변환
+
+### 인터넷 주소의 초기화와 할당
+inet_aton 함수도 기능상으로는 inet_addr 함수와 동일. 즉, 문자열 형태의 IP주소를 32비트 정수, 그것도 네트워크 바이트 순서로 정렬해서 반환
+```
+int inet_aton(const char* string, struct in_addr* addr)
+```
+- Parameter <br>
+string: 변환할 IP주소 정보를 담고 있는 문자열의 주소 값 전달 <br>
+addr: 변환된 정보를 저장할 in_addr 구조체 변수의 주소 값 전달 <br>
+- Return <br>
+1: Success / 0: Fail
