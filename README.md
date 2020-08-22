@@ -48,3 +48,21 @@ Socket 함수의 두번째 인자로 SOCK_DGRAM을 전달하면 비 연결지향
 Ex]<br> 
 TCP 소켓: socket(PF_INET, SOCK_STREAM, IPPROTO_TCP); <br>
 UDP 소켓: socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP); 
+
+## 주소정보의 표현
+```
+struct sockaddr_in
+{
+    sa_family_t     sin_family; // 주소체계(Address Family)
+    uint16_t        sin_port;   // 16비트 TCP/UDP PORT 번호
+    struct in_addr  sin_addr;   // 32비트 IP주소
+    char            sin_zero[8] // 사용되지 않음
+}
+```
+```
+struct in_addr
+{
+    in_addr_t   s_addr; //32bit IPv4 인터넷 주소
+}
+```
+
