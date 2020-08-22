@@ -126,3 +126,39 @@ inet_aton과 반대로 작동하는 함수로써  인자로 전달된 정수형�
 - Return <br>
 성공 시 변환된 문자열의 주소 값, 실패 시 -1 반환
 
+## TCP기반 서버/클라이언트
+### 연결요청 대기상태로의 진입
+```
+int listen(int sock, int backlog);
+```
+- Parameter <br>
+sock: 연결요청 대깃상태에 두고자 하는 소켓의 file descriptor <br>
+backlog: 연결요청 대기 큐(Queue)의 크기정보 전달, 5가 전달되면 큐의 크기가 5가 되어 클라이언트의 연결요청을 5개까지 대기시킬 수 있음
+- Return <br>
+0: Success / -1: Fail
+
+### 클라이언트의 연결요청 수락
+```
+int accept(int sock, struct sockaddr* addr, socklen_t* addrlen);
+```
+- Parameter <br>
+sock: 서버 소켓의 file descriptor <br>
+addr: 연결요청 한 클라이언트의 주소정보를 담을 변수의 주소 값 전달, 함수 호출이 완료되면 인자로 전달된 주소의 변수에는 클라이언트의 주소정보가 채워짐
+addrlen: 두 번째 매개변수 addr에 전달된 주소의 변수 크기를 바이트 단위로 전달
+- Return <br>
+socket의 file descriptor number: Success / -1: Fail
+
+accept 함수는 연결요청 대기 큐에서 대기중인 클라이언트의 연결요청을 수락하는 기능의 함수. accept 함수는 호출성공 시 내부적으로 데이터 입출력에 사용할 소켓을 생성하고, 그 소켓의 file desriptor를 반환함
+
+### TCP 클라이언트 기본 함수
+```
+int connect(int sock, struct sockaddr* servaddr, socklen_t addrlen);
+```
+- Parameter <br>
+sock: 클라이언트 소켓의 파일 디스크립터 전달 <br>
+servaddr: 연결요청 할 서버의 주소정보를 담은 변수의 주소 값 전달 <br>
+addrlen: 두 번째 매개변수 servaddr에 전달된 주소의 변수 크기를 바이트 단위로 전달 <br>
+- Return <br>
+0: Success / -1: Fail
+
+<img src="images/tcpWorkflow.png" width="50%">
