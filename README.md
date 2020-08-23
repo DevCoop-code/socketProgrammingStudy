@@ -167,3 +167,16 @@ addrlen: 두 번째 매개변수 servaddr에 전달된 주소의 변수 크기�
 
 ## Iterative 기반의 서버
 <img src="images/IterativeServer.png" width="20%">
+
+## TCP 기반의 Half-close
+```
+int shutdown(int sock, int howto)
+```
+- Parameter <br>
+sock: 종료할 소켓의 파일 디스크립터 전달 <br>
+howto: 종료방법에 대한 정보 전달 <br>
+    - SHUT_RD: 입력 스트림 종료
+    - SHUT_WR: 출력 스트림 종료
+    - SHUT_RDWR: 입출력 스트림 종료
+- Return <br>
+0: Success / -1: Fail
