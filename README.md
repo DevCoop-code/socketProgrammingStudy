@@ -162,3 +162,8 @@ addrlen: 두 번째 매개변수 servaddr에 전달된 주소의 변수 크기�
 0: Success / -1: Fail
 
 <img src="images/tcpWorkflow.png" width="50%">
+
+<br>
+
+## Iterative 기반의 서버
+<img src="images/IterativeServer.png" width="20%">
