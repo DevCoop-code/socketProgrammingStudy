@@ -180,3 +180,33 @@ howto: 종료방법에 대한 정보 전달 <br>
     - SHUT_RDWR: 입출력 스트림 종료
 - Return <br>
 0: Success / -1: Fail
+
+## Domain Name System
+```
+struct hostent* gethostbyname(const char* hostname);
+```
+성공시 hostent 구조체 변수의 주소 값, 실패시 NULL 포인터 변환<br>
+변환하고자 하는 도메인의 이름을 문자열 형태로 전달하면 해당 도메인의 IP 주소정보가 반환
+```
+struct hostent
+{
+    char* h_name;       // official name
+    char** h_aliases    // alias list
+    int h_addrtype;     // host address type
+    int h_length;       // address length
+    char** h_addr_list  // address list
+}
+```
+hname: 공식 도메인 이름, 도메인의 대표 이름. <br>
+h_aliases: 하나의 IP에 둘 이상의 도메인 이름을 지정할 경우 공식 도메인 이름 이외에 해당 메인 페이지에 접속할 수 있는 다른 도메인 이름 <br>
+h_addrtype: ip 주소의 주소체계(ipv4, ipv6, ...) <br>
+h_length: ip주소의 크기정보(ipv4: 4bytes, ipv6: 16bytes) <br>
+h_addr_list: IP 주소가 정수의 형태로 반환
+
+```
+struct hostent* gethostbyaddr(const char* addr, socklen_t len, int family);
+```
+- Parameter <br>
+addr: IP주소를 지니는 in_addr 구조체 변수의 포인터 전달, IPv4 이외의 다양한 정보를 전달받을 수 있도록 일반화하기 위해 매개변수를 char형 포인터로 선언 <br>
+len: 첫 번째 인자로 전달된 주소정보의 길이, IPv4의 경우 4, IPv6의 경우 16 전달 <br>
+family: 주소체계 정보 전달, IPv4의 경우 AF_INET, IPv6의 경우 AF_INET6 전달
