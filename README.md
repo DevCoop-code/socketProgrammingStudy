@@ -210,3 +210,49 @@ struct hostent* gethostbyaddr(const char* addr, socklen_t len, int family);
 addr: IP주소를 지니는 in_addr 구조체 변수의 포인터 전달, IPv4 이외의 다양한 정보를 전달받을 수 있도록 일반화하기 위해 매개변수를 char형 포인터로 선언 <br>
 len: 첫 번째 인자로 전달된 주소정보의 길이, IPv4의 경우 4, IPv6의 경우 16 전달 <br>
 family: 주소체계 정보 전달, IPv4의 경우 AF_INET, IPv6의 경우 AF_INET6 전달
+
+## 시그널 핸들링
+**시그널(signal)** 은 특정상황이 발생했음을 알리기 위해 운영체제가 프로세스에게 전달하는 메시지를 의미, 그 메시지에 반응해 메시지와 연관하여 미리 정의된 작업이 진행되는 것을 가리켜 **핸들링** 또는 **시그널 핸들링** 이라 함
+```
+#include <signal.h>
+void (*signal(int signo, void (*func)(int)))(int);
+```
+시그널 발생시 호출되도록 이전에 등록된 함수의 포인터 반환
+- 함수이름 : signal
+- 매개변수 선언: int signo, void (*func)(int)
+- 반환형: 매개변수형이 int이고 반환형이 void인 함수 포인터
+
+- Parameter
+  - signo: 특정 상황에 대한 정보
+    - SIGALRM: alarm 함수호출을 통해서 등록된 시간이 된 상황
+    - SIGINT: CTRL+C가 입력된 상황
+    - SIGCHILD: 자식 프로셋가 종료된 상황
+
+시그널이 발생하면 sleep 함수의 호출로 블로킹 상태에 있던 프로세스가 깨어남
+```
+int sigaction(intt signo, const struct sigaction* act, struct sigaction* oldact)
+```
+- Parameter <br>
+signo: signal 함수와 마찬가지로 signal의 정보를 인자로 전달 <br>
+act: 첫 번째 인자로 전달된 상수에 해당하는 시그널 발생시 호출될 함수(시그널 핸들러)의 정보전달 <br>
+oldact: 이전에 등록되었던 시그널 핸들러의 함수 포인터를 얻는데 사용되는 인자, 필요 없다면 0 전달
+- Return <br>
+0: Success / -1: Fail
+```
+struct sigaction
+{
+    union __sigaction_u __sigaction_u;
+    sigset_t sa_mask
+    int sa_flags
+}
+```
+```
+union __sigaction_u {
+	void    (*__sa_handler)(int);
+	void    (*__sa_sigaction)(int, struct __siginfo *,
+	    void *);
+};
+```
+sa_handler에 시그널 핸들러의 함수 포인터 값(주소 값)을 저장, 나머지는 0으로 초기화 <br>
+**sigaction이 signal보다 훨씬 더 안정적, signal 보단 sigaction을 사용**
+
