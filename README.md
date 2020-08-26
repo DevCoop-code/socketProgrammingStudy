@@ -271,3 +271,59 @@ fields[0]: 파이프로부터 데이터를 수시하는데 사용되는 파일 �
 fields[0]: 파이프로부터 데이터를 송신하는데 사용되는 파일 디스크립터가 저장, 파이프의 입구
 
 ![processCommunicatePIPE](images/processCommunicatePIPE.png)
+
+## Multiplexing
+### select 함수의 이해와 서버의 구현
+**select** 함수를 이용하는 것이 멀티플렉싱 서버의 구현에 있어 가장 대표적 방법
+### select 함수의 기능과 호출순서
+select 함수를 사용하면 한곳에 여러 개의 파일 디스크립터를 모아놓고 동시에 이들을 관찰 할 수 있음 <br>
+- 관찰할 수 있는 항목
+  - 수신한 데이터를 지니고 있는 소켓이 존재하는가?
+  - 블로킹되지 않고 데이터의 전송이 가능한 소켓은 무엇인가?
+  - 예외상황이 발생한 소켓은 무엇인가?
+
+### select 함수의 호출방법과 순서
+![selectFunction](images/selectFunction.png)
+
+- 파일 디스크립터의 설정
+  - select 함수를 사용하면 여러 개의 파일 디스크립터를 동시에 관찰할 수 있음, 관찰하고자 하는 파일 디스크립터를 모을 때도 관찰항목(수신, 전송, 예외)에 따라 구분해 모아야 함. 파일 디스크립터를 세 묶음으로 모을 때 사용되는 것이 **fd_set**형 변수 <br>
+
+![fd_set_variable](images/fd_set_variable.png)
+이 비트가 1로 설정되면 해당 파일 디스크립터가 관찰의 대상임을 의미
+
+- FD_ZERO(fd_set* fdset)
+  - 인자로 전달된 주소의 fd_set 형 변수의 모든 비트를 0으로 초기화한다
+- FD_SET(int fd, fd_set *fdset)
+  - 매개변수 fdset으로 전달된 주소의 변수에 매개변수 fd로 전달된 파일 디스크립터 정보를 등록함
+- FD_CLR(int fd, fd_set* fdset)
+  - 매개변수 fdset으로 전달된 주소의 변수에서 매개변수 fd로 전달된 파일 디스크립터 정보를 삭제
+- FD_ISSET(int fd, fd_set* fdset)
+  - 매개변수 fdset으로 전달된 주소의 변수에 매개변수 fd로 전달된 파일 디스크립터 정보가 있으면 양수를 반환 <- FD_ISSET은 select 함수의 호출결과를 확인하는 용도로 사용됨
+
+![fd_set_func](images/fd_set_func.png)
+
+- 검사(관찰)의 범위지정과 타임아웃의 설정
+
+```
+#include <sys/select.h>
+#include <sys/time.h>
+
+int select(int maxfd, fd_set* readset, fd_set* writeset, fd_set* exceptset, const struct timeval* timeout);
+```
+- Parameter <br>
+maxfd: 검사 대상이 되는 파일 디스크립터의 수 <br>
+readset: fd_set형 변수에 '수신된 데이터의 존재여부'에 관심 있는 파일 디스크립터 정보를 모두 등록해서 그 변수의 주소 값을 전달 <br>
+writeset: fd_set형 변수에 블로킹 없는 데이터 전송의 가능여부에 관심 있는 파일 디스크립터 정보를 모두 등록해서 그 변수의 주소 값을 전달 <br>
+exceptset: fd_set형 변수에 예의상황의 발생여부에 관심이 있는 파일 디스크립터 정보를 모두 등록해서 그 변수의 주소 값을 전달 <br>
+timeout: select 함수호출 이후에 무한정 블로킹 상태에 빠지지 않도록 타임아웃을 설정하기 위한 인자를 전달 <br>
+
+- Return <br>
+-1: Error 발생 / 0: Time out에 의한 반환
+
+```
+struct timeval
+{
+  long tv_sec;  // seconds
+  long tv_usec; // microseconds
+}
+```
