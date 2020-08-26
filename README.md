@@ -269,3 +269,5 @@ int pipe(int fields[2])
 - Parameters <br>
 fields[0]: 파이프로부터 데이터를 수시하는데 사용되는 파일 디스크립터가 저장, 파이프의 출구 <br>
 fields[0]: 파이프로부터 데이터를 송신하는데 사용되는 파일 디스크립터가 저장, 파이프의 입구
+
+![processCommunicatePIPE](images/processCommunicatePIPE.png)
