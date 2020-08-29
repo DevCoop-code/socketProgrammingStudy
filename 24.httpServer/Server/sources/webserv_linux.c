@@ -74,7 +74,7 @@ void request_handler(void* arg) {
         return;
     }
 
-    strcpy(method, strtok(req_line, " /")); //strtok: string tokenize, 문자열을 토큰처럼 조각조각 내는 함수
+    strcpy(method, strtok(req_line, " /")); //strtok: string tokenize, 문자열을 토큰처럼 조각조각 내는 함수(https://blockdmask.tistory.com/382)
     strcpy(file_name, strtok(NULL, " /"));
     strcpy(ct, content_type(file_name));
     if (strcmp(method, "GET") != 0) {   // strcmp: 문자열 비교
