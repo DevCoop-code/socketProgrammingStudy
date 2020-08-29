@@ -11,7 +11,6 @@
 void error_handling(char* buf);
 
 int main(int argc, char* argv[]) {
-    printf("hello5 \n");
     int serv_sock, clnt_sock;
     struct sockaddr_in serv_adr, clnt_adr;
     struct timeval timeout;
