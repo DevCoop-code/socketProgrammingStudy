@@ -230,7 +230,7 @@ void (*signal(int signo, void (*func)(int)))(int);
 
 시그널이 발생하면 sleep 함수의 호출로 블로킹 상태에 있던 프로세스가 깨어남
 ```
-int sigaction(intt signo, const struct sigaction* act, struct sigaction* oldact)
+int sigaction(int signo, const struct sigaction* act, struct sigaction* oldact)
 ```
 - Parameter <br>
 signo: signal 함수와 마찬가지로 signal의 정보를 인자로 전달 <br>
@@ -327,3 +327,32 @@ struct timeval
   long tv_usec; // microseconds
 }
 ```
+
+## Linux send & recv 입출력 함수
+```
+ssize_t send(int sockfd, const void* buf, size_t nbytes, int flags)
+```
+- Parameter <br>
+sockfd: 데이터 전송 대상과의 연결을 의미하는 소켓의 파일 디스크립터 전달 <br>
+buf: 전송할 데이터를 저장하고 있는 버퍼의 주소 값 전달 <br>
+nbytes: 전송할 바이트 수 전달 <br>
+flags: 데이터 전송 시 적용할 다양한 옵션 정보 전달 <br>
+
+- Return <br>
+성공 시 전송된 바이트 수, 실패 시 -1 반환
+
+```
+ssize_t recv(int sockfd, void* buf, size_t nbytes, int flags)
+```
+- Parameter <br>
+sockfd: 데이터 수신 대상과의 연결을 의미하는 소켓의 파일 디스크립터 <br>
+buf: 수신된 데이터를 저장할 버퍼의 주소 값 전달 <br>
+nbytes: 수신할 수 있는 최대 바이트 수 전달 <br>
+flags: 데이터 수신 시 적용할 다양한 옵션 정보전달 <br>
+
+- Return <br>
+성공 시 수신한 바이트 수(단 EOF 전송 시 0), 실패 시 -1 반환
+
+### Flags - MSG_OOB: 긴급 메시지의 전송
+Out-of-band data라 불리는 긴급 메시지의 전송에 사용 <br>
+긴급으로 무언가를 처리하기 위해 처리 방법 및 경로는 다른것과는 다름
